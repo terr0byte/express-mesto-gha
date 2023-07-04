@@ -7,8 +7,10 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
     validate: {
-      validator: (value) => ((this.minlength < value) && (this.maxlength > value)),
-      message: 'name should be 2 to 30 charachters long',
+      validator(value) {
+        return ((value.length <= 30) && (value.length >= 2));
+      },
+      message: 'name should be 2 to 30 characters long',
     },
   },
   about: {
@@ -17,8 +19,10 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
     validate: {
-      validator: (value) => ((this.minlength < value) && (this.maxlength > value)),
-      message: 'about should be 2 to 30 charachters long',
+      validator(value) {
+        return ((value.length <= 30) && (value.length >= 2));
+      },
+      message: 'about should be 2 to 30 characters long',
     },
   },
   avatar: {
