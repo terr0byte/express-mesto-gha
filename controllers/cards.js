@@ -24,8 +24,14 @@ module.exports.sendCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => {
+      if (card === null) return Promise.reject(new Error('Invalid'));
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
 };
@@ -36,10 +42,14 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) return Promise.reject(new Error('Invalid'));
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
-      if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
 };
@@ -50,10 +60,14 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) return Promise.reject(new Error('Invalid'));
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
-      if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
+      if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
 };
