@@ -36,6 +36,7 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
@@ -49,6 +50,7 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
