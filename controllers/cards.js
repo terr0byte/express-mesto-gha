@@ -30,7 +30,6 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
-      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
       if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
@@ -48,7 +47,6 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
-      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
       if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
@@ -66,7 +64,6 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
-      if (err.name === 'ValidationError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
       if (err.name === 'CastError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });

@@ -37,18 +37,16 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'TypeError' || err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
-      if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+      if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
 };
 
 module.exports.updateAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, req.body, { new: true })
+  User.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_VALIDATION).send({ message: 'Неправильный формат данных' });
-      if (err.name === 'CastError') return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
       return res.status(ERROR_CODE).send({ message: 'Что-то пошло не так...' });
     });
 };
