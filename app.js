@@ -4,6 +4,8 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
+const { errors } = require('celebrate');
+
 const bodyParser = require('body-parser');
 
 const router = require('./routes/router');
@@ -17,6 +19,8 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', router);
+
+app.use(errors());
 
 app.use((err, req, res) => {
   const { statusCode = 500, message } = err;
