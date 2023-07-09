@@ -100,7 +100,7 @@ module.exports.login = (req, res, next) => {
         throw new LoginError('Неправильные почта или пароль');
       }
 
-      return bcrypt.compare(password, user.password)
+      bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
             throw new LoginError('Неправильные почта или пароль');
