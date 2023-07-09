@@ -43,8 +43,8 @@ router.post('/signin', celebrate({
 router.use(auth);
 
 router.get('/users', sendUsers);
-router.get('/users/:userId', sendUser);
 router.get('/users/me', sendCurrentUser);
+router.get('/users/:userId', sendUser);
 
 router.get('/cards', sendCards);
 router.post('/cards', createCard);
