@@ -22,7 +22,7 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
-const { auth } = require('../middlewares/auth');
+const auth = require('../middlewares/auth');
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
