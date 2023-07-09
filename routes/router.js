@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
   ERROR_NOT_FOUND,
 } = require('../utils/constants');
@@ -6,9 +7,11 @@ const {
 const {
   createUser,
   sendUser,
+  sendCurrentUser,
   sendUsers,
   updateProfile,
   updateAvatar,
+  login,
 } = require('../controllers/users');
 
 const {
@@ -19,9 +22,29 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
+const { auth } = require('../middlewares/auth');
+
+router.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+router.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
+  }),
+}), createUser);
+
+router.use(auth);
+
 router.get('/users', sendUsers);
 router.get('/users/:userId', sendUser);
-router.post('/users', createUser);
+router.get('/users/me', sendCurrentUser);
 
 router.get('/cards', sendCards);
 router.post('/cards', createCard);

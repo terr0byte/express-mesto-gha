@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 
 const mongoose = require('mongoose');
@@ -13,14 +15,19 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useNewUrlParser: true,
 });
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64a480f6656f5d94d0851638',
-  };
-
-  next();
-});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', router);
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+});
 
 app.listen(PORT);
