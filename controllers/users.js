@@ -24,7 +24,17 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      data: {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+        // eslint-disable-next-line no-underscore-dangle
+        __v: user.__v,
+      },
+    }))
     .catch((err) => {
       if (err.code === 11000) {
         throw new RegisterError('Пользователь с таким email уже существует');
@@ -84,15 +94,25 @@ module.exports.updateAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  return User.findOne({ email }).select('+password')
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
 
-      res.cookie(jwt, token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-      })
-        .send();
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+
+          return user;
+        })
+        .then((u) => {
+          const token = jwt.sign({ _id: u._id }, JWT_SECRET, { expiresIn: '7d' });
+
+          res.send({ token });
+        });
     })
     .catch(() => {
       throw new LoginError('Неправильные почта или пароль');
