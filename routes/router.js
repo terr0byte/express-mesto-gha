@@ -28,7 +28,8 @@ router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    // eslint-disable-next-line no-useless-escape
+    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
