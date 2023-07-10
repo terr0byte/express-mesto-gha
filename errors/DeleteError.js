@@ -1,9 +1,8 @@
 class DeleteError extends Error {
-    constructor(message) {
-      super(message);
-      this.statusCode = 403;
-    }
+  constructor(message) {
+    super(message);
+    this.statusCode = 403;
   }
-  
-  module.exports = DeleteError;
-  
+}
+
+module.exports = DeleteError;

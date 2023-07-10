@@ -3,7 +3,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['airbnb-base'],
+  extends: 'airbnb-base',
   overrides: [
     {
       env: {
@@ -19,11 +19,7 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module',
   },
-  plugins: [
-
-  ],
   rules: {
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
   },

@@ -6,7 +6,7 @@ const DeleteError = require('../errors/DeleteError');
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') throw new FormatError('Неправильный формат данных');
       next(err);
@@ -20,17 +20,15 @@ module.exports.sendCards = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.deleteCard = (req, res, next) => {  
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card === null) throw new NotFoundError('Несуществующий ID');
       if (req.user._id !== card.owner.toString()) {
         throw new DeleteError('Неверный пользователь');
-      };
-      Card.findByIdAndRemove(req.params.cardId)
-        .then(() => {
-          return res.status(200).send({ message: 'Успешно' });
-        })
+      }
+      Card.deleteOne(card)
+        .then(() => res.status(200).send({ message: 'Успешно' }))
         .catch((err) => {
           if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
           next(err);

@@ -2,6 +2,10 @@ require('dotenv').config();
 
 const express = require('express');
 
+const helmet = require('helmet');
+
+const rateLimit = require('express-rate-limit');
+
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
@@ -12,12 +16,24 @@ const cookieParser = require('cookie-parser');
 
 const router = require('./routes/router');
 
-const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://0.0.0.0:27017/mestodb' } = process.env;
 
-mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
+const app = express();
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(helmet());
+
+mongoose.connect(DB_URL, {
   useNewUrlParser: true,
 });
+
+app.use('/api', apiLimiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +45,6 @@ app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  console.log(err);
   const { statusCode = 500, message } = err;
   const sendMessage = statusCode === 500
     ? 'На сервере произошла ошибка'

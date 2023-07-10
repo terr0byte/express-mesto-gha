@@ -24,7 +24,7 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({
+    .then((user) => res.status(201).send({
       data: {
         name: user.name,
         about: user.about,
@@ -47,7 +47,6 @@ module.exports.createUser = (req, res, next) => {
 module.exports.sendUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      console.log(user);
       if (user === null) throw new NotFoundError('Несуществующий ID');
       return res.send({ data: user });
     })
@@ -119,16 +118,19 @@ module.exports.login = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-          }).send({ data: { 
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-            email: user.email,
-            _id: user._id,
-            // eslint-disable-next-line no-underscore-dangle
-            __v: user.__v,            
-          } });
-        });
+          }).send({
+            data: {
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+              email: user.email,
+              _id: user._id,
+              // eslint-disable-next-line no-underscore-dangle
+              __v: user.__v,
+            },
+          });
+        })
+        .catch(next);
     })
     .catch(() => {
       throw new LoginError('Неправильные почта или пароль');

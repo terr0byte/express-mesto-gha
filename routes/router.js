@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const {
-  ERROR_NOT_FOUND,
-} = require('../utils/constants');
+const NotFoundError = require('../errors/not-found-err');
 
 const {
   createUser,
@@ -23,6 +21,9 @@ const {
 } = require('../controllers/cards');
 
 const auth = require('../middlewares/auth');
+
+// eslint-disable-next-line no-useless-escape
+const regex = /^https?:\/\/(www\.)?[\w\-\.\~\:\/\?\#\[\]\@\!\$\&\`\(\)\*\+\,\;\=]*\.[\w\-\.\~\:\/\?\#\[\]\@\!\$\&\`\(\)\*\+\,\;\=]*/;
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -47,7 +48,7 @@ router.get('/users', sendUsers);
 router.get('/users/me', sendCurrentUser);
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().length(24),
+    userId: Joi.string().length(24).hex(),
   }),
 }), sendUser);
 
@@ -56,12 +57,12 @@ router.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     // eslint-disable-next-line no-useless-escape
-    link: Joi.string().required().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/),
+    link: Joi.string().required().pattern(regex),
   }),
 }), createCard);
 router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().length(24).hex(),
   }),
 }), deleteCard);
 
@@ -74,22 +75,22 @@ router.patch('/users/me', celebrate({
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
     // eslint-disable-next-line no-useless-escape
-    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/)
+    avatar: Joi.string().pattern(regex),
   }),
 }), updateAvatar);
 router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().length(24).hex(),
   }),
 }), likeCard);
 router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().length(24).hex(),
   }),
 }), dislikeCard);
 
-router.patch('/404', (req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'NOT FOUND' });
+router.patch('*', (req, res, next) => {
+  next(new NotFoundError('Маршрут не найден'));
 });
 
 module.exports = router;
