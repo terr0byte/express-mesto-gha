@@ -21,11 +21,10 @@ module.exports.sendCards = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteCard = (req, res, next) => {  
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card === null) throw new NotFoundError('Несуществующий ID');
-      if (req.user._id !== card.owner) throw new DeleteError('Неверный пользователь');
       return res.status(200).send({ data: card });
     })
     .catch((err) => {
