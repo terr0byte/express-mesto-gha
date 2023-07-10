@@ -48,11 +48,27 @@ router.get('/users/me', sendCurrentUser);
 router.get('/users/:userId', sendUser);
 
 router.get('/cards', sendCards);
-router.post('/cards', createCard);
+router.post('/cards', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    // eslint-disable-next-line no-useless-escape
+    link: Joi.string().required().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/),
+  }),
+}), createCard);
 router.delete('/cards/:cardId', deleteCard);
 
-router.patch('/users/me', updateProfile);
-router.patch('/users/me/avatar', updateAvatar);
+router.patch('/users/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+}), updateProfile);
+router.patch('/users/me/avatar', celebrate({
+  body: Joi.object().keys({
+    // eslint-disable-next-line no-useless-escape
+    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/)
+  }),
+}), updateAvatar);
 router.put('/cards/:cardId/likes', likeCard);
 router.delete('/cards/:cardId/likes', dislikeCard);
 
