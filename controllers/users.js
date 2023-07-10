@@ -6,7 +6,7 @@ const FormatError = require('../errors/format-err');
 const LoginError = require('../errors/login-err');
 const RegisterError = require('../errors/register-err');
 
-const { JWT_SECRET } = process.env;
+const JWT_SECRET = 'secret-key';
 
 module.exports.createUser = (req, res, next) => {
   const {
