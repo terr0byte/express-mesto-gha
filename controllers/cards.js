@@ -24,7 +24,6 @@ module.exports.sendCards = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   if (req.user._id !== card.owner) {
     next(new DeleteError('Неверный пользователь'));
-    return;
   };
   
   Card.findByIdAndRemove(req.params.cardId)
