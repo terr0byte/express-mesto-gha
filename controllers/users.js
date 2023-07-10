@@ -47,11 +47,13 @@ module.exports.createUser = (req, res, next) => {
 module.exports.sendUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
+      console.log(user);
       if (user === null) throw new NotFoundError('Несуществующий ID');
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -64,6 +66,7 @@ module.exports.sendCurrentUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -79,6 +82,7 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -88,6 +92,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };

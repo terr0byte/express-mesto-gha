@@ -10,6 +10,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -29,6 +30,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -45,6 +47,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
@@ -61,6 +64,7 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+      next(err);
     })
     .catch(next);
 };
