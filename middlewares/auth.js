@@ -3,7 +3,7 @@ const {
   ERROR_LOGIN,
 } = require('../utils/constants');
 
-const JWT_SECRET = 'secret-key';
+const { JWT_SECRET = 'secret-key' } = process.env;
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {

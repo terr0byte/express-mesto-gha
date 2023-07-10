@@ -6,7 +6,7 @@ const FormatError = require('../errors/format-err');
 const LoginError = require('../errors/login-err');
 const RegisterError = require('../errors/register-err');
 
-const JWT_SECRET = 'secret-key';
+const { JWT_SECRET = 'secret-key' } = process.env;
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -114,7 +114,15 @@ module.exports.login = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-          }).send();
+          }).send({ data: { 
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+            // eslint-disable-next-line no-underscore-dangle
+            __v: user.__v,            
+          } });
         });
     })
     .catch(() => {
