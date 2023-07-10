@@ -45,7 +45,11 @@ router.use(auth);
 
 router.get('/users', sendUsers);
 router.get('/users/me', sendCurrentUser);
-router.get('/users/:userId', sendUser);
+router.get('/users/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24),
+  }),
+}), sendUser);
 
 router.get('/cards', sendCards);
 router.post('/cards', celebrate({
@@ -55,7 +59,11 @@ router.post('/cards', celebrate({
     link: Joi.string().required().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/),
   }),
 }), createCard);
-router.delete('/cards/:cardId', deleteCard);
+router.delete('/cards/:cardId', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24),
+  }),
+}), deleteCard);
 
 router.patch('/users/me', celebrate({
   body: Joi.object().keys({
@@ -69,8 +77,16 @@ router.patch('/users/me/avatar', celebrate({
     avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/)
   }),
 }), updateAvatar);
-router.put('/cards/:cardId/likes', likeCard);
-router.delete('/cards/:cardId/likes', dislikeCard);
+router.put('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24),
+  }),
+}), likeCard);
+router.delete('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24),
+  }),
+}), dislikeCard);
 
 router.patch('/404', (req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'NOT FOUND' });

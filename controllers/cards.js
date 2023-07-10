@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const FormatError = require('../errors/format-err');
-const LoginError = require('../errors/login-err');
+const DeleteError = require('../errors/DeleteError');
 
 module.exports.createCard = (req, res, next) => {
   console.log(req.user._id);
@@ -25,8 +25,8 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card === null) throw new NotFoundError('Несуществующий ID');
-      if (req.user._id !== card.owner) throw new LoginError('Неверный пользователь');
-      return res.send({ data: card });
+      if (req.user._id !== card.owner) throw new DeleteError('Неверный пользователь');
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
