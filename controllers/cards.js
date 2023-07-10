@@ -21,15 +21,19 @@ module.exports.sendCards = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.deleteCard = (req, res, next) => {
-  if (req.user._id !== card.owner) {
-    next(new DeleteError('Неверный пользователь'));
-  };
-  
-  Card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {  
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (card === null) throw new NotFoundError('Несуществующий ID');
-      return res.status(200).send({ data: card });
+      Card.findByIdAndRemove(req.params.cardId)
+        .then(() => {
+          return res.status(200).send({ message: 'Успешно' });
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
+          next(err);
+        })
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') throw new FormatError('Неправильный формат данных');
