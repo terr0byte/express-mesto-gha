@@ -4,7 +4,6 @@ const FormatError = require('../errors/format-err');
 const DeleteError = require('../errors/DeleteError');
 
 module.exports.createCard = (req, res, next) => {
-  console.log(req.user._id);
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
@@ -25,7 +24,7 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card === null) throw new NotFoundError('Несуществующий ID');
-      if (req.user._id !== card.owner) {
+      if (req.user._id !== card.owner.toString()) {
         throw new DeleteError('Неверный пользователь');
       };
       Card.findByIdAndRemove(req.params.cardId)
