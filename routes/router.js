@@ -30,7 +30,7 @@ router.post('/signup', celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     // eslint-disable-next-line no-useless-escape
-    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-.~:\/?#\[\]@!$&`()*+,;=]*/),
+    avatar: Joi.string().pattern(regex),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -89,7 +89,7 @@ router.delete('/cards/:cardId/likes', celebrate({
   }),
 }), dislikeCard);
 
-router.patch('*', (req, res, next) => {
+router.all('*', (req, res, next) => {
   next(new NotFoundError('Маршрут не найден'));
 });
 
