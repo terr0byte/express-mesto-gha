@@ -21,8 +21,8 @@ const router = require('./routes/router');
 const { PORT = 3000, DB_URL = 'mongodb://0.0.0.0:27017/mestodb' } = process.env;
 
 const allowedCors = [
-  'localhost:3000/',
-  'localhost:3001/',
+  'http://localhost:3000/',
+  'http://localhost:3001/',
   'http://api.mesto.ilyamikhailov.nomoredomains.work/',
 ];
 
